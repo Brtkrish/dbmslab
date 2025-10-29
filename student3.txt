@@ -3,6 +3,7 @@ Generate queries to do the following:
 1.Find the number of students who have enrolled for the subject "OS" 
 2.Find all those students who opted for more than 5 subjects. 
 3.List out the name of the students whose specialisation is “IP”
+4.Find all those subjects which are offered by more than one faculty member. 
 ---Write a PL/SQL block that will display the student details along with subject opted using cursors.
 ---write a cursor to select the five highest marks scored students from the table.
 
@@ -74,6 +75,14 @@ FROM STUDENT S
 JOIN SUBJECT_RANK SR ON S.SUBJECT_OPTED = SR.SUBJECT_CODE
 JOIN FACULTY F ON SR.FACULTY_CODE = F.FACULTY_CODE
 WHERE F.SPECIALIZATION = 'IP';
+
+SELECT 
+    SUBJECT_NAME,
+    COUNT(DISTINCT FACULTY_CODE) AS FACULTY_COUNT
+FROM SUBJECT_RANK
+GROUP BY SUBJECT_NAME
+HAVING COUNT(DISTINCT FACULTY_CODE) > 1;
+
 
 ---------------------------------------------------------------------------------------------------
 
