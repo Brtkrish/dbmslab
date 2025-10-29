@@ -1,0 +1,172 @@
+Consider the schema for CompanyDatabase: EMPLOYEE (SSN, fName, lName, Address, Sex, Salary, SuperSSN, DNo) DEPARTMENT (DNo, DName, MgrSSN, MgrStartDate) DLOCATION (DNo,DLoc) PROJECT (PNo, PName, PLocation, DNo) WORKS_ON (SSN, PNo, Hours) 
+Write SQL queries to  
+Make a list of all project numbers for projects that involve an employee whose FIRST name is ‘Scott’, either as a worker or as a manager of the department that controls the project. 
+Show the resulting salaries if every employee working on the ‘IoT’ project is given a 10 percentraise. 
+Find the sum of the salaries of all employees of the ‘Accounts’ department.
+Display the employee with minimum salary. 
+Retrieve the name of each employee who works on all the projects controlled by department number 4 
+Retrieve the number of employees whose salary more than Rs.6,00,000.
+Write a Program to Check whether the given number is Palindrome in PL/SQL
+
+
+CREATE TABLE EMPLOYEE (
+SSN INT PRIMARY KEY,
+FNAME VARCHAR(100),
+LNAME VARCHAR(100),
+ADDRESS VARCHAR(100),
+SEX VARCHAR(100),
+SALARY INT,
+SUPERSSN INT,
+DNO INT 
+);
+
+CREATE TABLE DEPARTMENT (
+DNO INT PRIMARY KEY,
+DNAME VARCHAR(100),
+MGRSSN INT,
+MGRSTARTDATE DATE
+);
+
+CREATE TABLE DLOCATION(
+DNO INT,
+DLOC VARCHAR(100)
+);
+
+CREATE TABLE PROJECT(
+PNO INT PRIMARY KEY,
+PNAME VARCHAR(100),
+PLOCATION VARCHAR(100),
+DNO INT
+);
+
+CREATE TABLE WORKS_ON(
+SSN INT,
+PNO INT,
+HOURS INT,
+PRIMARY KEY(SSN,PNO)
+);
+
+
+INSERT INTO DEPARTMENT VALUES
+(1, 'Accounts', 1001, '2015-01-01'),
+(2, 'Research', 1002, '2016-03-15'),
+(3, 'Development', 1003, '2018-05-12'),
+(4, 'Production', 1004, '2019-07-23');
+
+
+INSERT INTO EMPLOYEE VALUES
+(1001, 'John', 'Smith', 'Delhi', 'M', 800000, NULL, 1),
+(1002, 'Alice', 'Brown', 'Mumbai', 'F', 950000, 1001, 2),
+(1003, 'Bob', 'Davis', 'Chennai', 'M', 700000, 1001, 3),
+(1004, 'Scott', 'Taylor', 'Pune', 'M', 600000, 1002, 4),
+(1005, 'Emma', 'Johnson', 'Kolkata', 'F', 550000, 1003, 4),
+(1006, 'Raj', 'Patel', 'Delhi', 'M', 750000, 1002, 3);
+
+
+INSERT INTO DLOCATION VALUES
+(1, 'Delhi'),
+(2, 'Mumbai'),
+(3, 'Chennai'),
+(4, 'Pune');
+
+
+INSERT INTO PROJECT VALUES
+(10, 'IoT', 'Pune', 3),
+(20, 'AI', 'Delhi', 2),
+(30, 'ERP', 'Chennai', 4),
+(40, 'Automation', 'Pune', 4);
+
+INSERT INTO WORKS_ON VALUES
+(1001, 10, 20),
+(1002, 20, 25),
+(1003, 10, 30),
+(1004, 30, 25),
+(1005, 40, 20),
+(1006, 10, 15),
+(1006, 40, 10);
+
+
+ALTER TABLE EMPLOYEE
+ADD CONSTRAINT
+FOREIGN KEY(DNO) REFERENCES DEPARTMENT(DNO)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+ALTER TABLE EMPLOYEE
+ADD CONSTRAINT
+FOREIGN KEY(SUPERSSN) REFERENCES EMPLOYEE(SSN)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+ALTER TABLE DEPARTMENT
+ADD CONSTRAINT
+FOREIGN KEY(MGRSSN) REFERENCES EMPLOYEE(SSN)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+ALTER TABLE DLOCATION
+ADD CONSTRAINT
+PRIMARY KEY(DNO,DLOC);
+
+ALTER TABLE DLOCATION
+ADD CONSTRAINT
+FOREIGN KEY(DNO) REFERENCES DEPARTMENT(DNO)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+ALTER TABLE PROJECT
+ADD CONSTRAINT
+FOREIGN KEY(DNO) REFERENCES DEPARTMENT(DNO)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+ALTER TABLE WORKS_ON
+ADD CONSTRAINT
+FOREIGN KEY(SSN) REFERENCES EMPLOYEE(SSN)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+ALTER TABLE WORKS_ON
+ADD CONSTRAINT
+FOREIGN KEY(PNO) REFERENCES PROJECT(PNO)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+
+
+SELECT P.PNo
+FROM PROJECT P
+JOIN DEPARTMENT D ON P.DNo = D.DNo
+JOIN EMPLOYEE M ON D.MgrSSN = M.SSN
+JOIN WORKS_ON W ON P.PNo = W.PNo
+JOIN EMPLOYEE E ON W.SSN = E.SSN
+WHERE E.fName = 'Scott' OR M.fName = 'Scott';
+
+SELECT E.fName, E.lName, 
+E.Salary AS Old_Salary,
+(E.Salary * 1.10) AS New_Salary
+FROM EMPLOYEE E
+JOIN WORKS_ON W ON E.SSN = W.SSN
+JOIN PROJECT P ON W.PNo = P.PNo
+WHERE P.PName = 'IoT';
+
+
+
+SELECT D.DName, SUM(E.Salary) AS Total_Salary
+FROM EMPLOYEE E
+JOIN DEPARTMENT D ON E.DNo = D.DNo
+WHERE D.DName = 'Accounts';
+
+SELECT E.fName , E.lName , E.Salary
+FROM EMPLOYEE E
+WHERE Salary = (SELECT MIN(Salary) FROM EMPLOYEE);
+
+SELECT E.fName, E.lName
+FROM EMPLOYEE E
+JOIN WORKS_ON W ON E.SSN = W.SSN
+JOIN PROJECT P ON W.PNo = P.PNo
+WHERE P.DNo = 4;
+
+SELECT COUNT(*) AS No_of_Employees
+FROM EMPLOYEE
+WHERE Salary > 600000;

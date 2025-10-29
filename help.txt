@@ -1,0 +1,18 @@
+List of Files and Their Details
+-------------------------------
+
+1. book.txt
+   • Description: Contains information about books.
+   • Last Modified: 3 minutes ago
+
+2. college_faculty
+   • Description: Contains data about college faculty members.
+   • Last Modified: now
+
+3. employee.txt
+   • Description: Contains employee details and related records.
+   • Last Modified: 2 minutes ago
+
+4. palindrome.txt
+   • Description: Program or data related to checking palindrome numbers/strings.
+   • Last Modified: 1 minute ago
