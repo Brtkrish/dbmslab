@@ -1,7 +1,7 @@
 SET SERVEROUTPUT ON;
 
 DECLARE
-  n NUMBER := 12;         -- you can change this number
+  n NUMBER := 12;         -- inputno
   i NUMBER := 2;
   flag NUMBER := 0;
 BEGIN
