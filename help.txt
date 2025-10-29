@@ -4,6 +4,7 @@
 4. salesman.txt salesman info and cursor use
 5. student.txt - student and course tables , triggers 
 6. student2.txt - student,semsec,class,sub,iamarks , prime or not
+7. student3.txt - student,subject_rank,faculty , cursor
 
 
 
