@@ -1,0 +1,79 @@
+Create the following tables: Student (roll-no, name, date-of-birth, course-id) Course (Course-id, name, fee, duration) . Generate queries to do the following
+1.List all those students who are greater than 18 years of age and have opted for MCA course. 
+2.List all those courses whose fee is greater than that of MCA course.
+3.List out the name of all the students whose fees is greater than that of MCA course fees in the descending order of their names. ----------. 
+
+----Convert student name into uppercase whenever a student record is inserted or updated. Trigger to fire before the insert or update.-
+
+
+CREATE TABLE COURSE (
+COURSE_ID INT PRIMARY KEY,
+NAME VARCHAR(50),
+FEE INT,
+DURATION VARCHAR(20)
+);
+
+CREATE TABLE STUDENT (
+ROLL_NO INT PRIMARY KEY,
+NAME VARCHAR(50),
+DATE_OF_BIRTH DATE,
+COURSE_ID INT,
+FOREIGN KEY (COURSE_ID) REFERENCES COURSE(COURSE_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE
+); 
+
+INSERT INTO COURSE (COURSE_ID, NAME, FEE, DURATION) VALUES
+(101, 'BCA', 35000, '3 years'),
+(102, 'MCA', 50000, '2 years'),
+(103, 'MBA', 60000, '2 years'),
+(104, 'BBA', 40000, '3 years'),
+(105, 'MSC', 55000, '2 years');
+
+INSERT INTO STUDENT (ROLL_NO, NAME, DATE_OF_BIRTH, COURSE_ID) VALUES
+(1, 'Rahul Sharma', '2003-05-12', 102),
+(2, 'Neha Verma', '2006-11-25' , 101),
+(3, 'Amit Singh', '2000-03-10', 103),
+(4, 'Priya Das', '1999-08-22', 102),
+(5, 'Karan Mehta', '2004-07-18', 105);
+
+SELECT 
+  S.ROLL_NO,
+  S.NAME,
+  C.NAME AS COURSE_NAME,
+  TIMESTAMPDIFF(YEAR, S.DATE_OF_BIRTH, CURDATE()) AS AGE
+FROM STUDENT S
+JOIN COURSE C ON S.COURSE_ID = C.COURSE_ID
+WHERE C.NAME = 'MCA'
+  AND TIMESTAMPDIFF(YEAR, S.DATE_OF_BIRTH, CURDATE()) > 18;
+
+
+SELECT 
+  NAME AS COURSE_NAME,
+  FEE
+FROM COURSE
+WHERE FEE > (
+  SELECT FEE FROM COURSE WHERE NAME = 'MCA'
+);
+
+
+SELECT 
+  S.NAME AS STUDENT_NAME,
+  C.NAME AS COURSE_NAME,
+  C.FEE
+FROM STUDENT S
+JOIN COURSE C ON S.COURSE_ID = C.COURSE_ID
+WHERE C.FEE > (
+  SELECT FEE FROM COURSE WHERE NAME = 'MCA'
+)
+ORDER BY S.NAME DESC;
+
+-------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE TRIGGER STUDENT_NAME_UPPER
+BEFORE INSERT OR UPDATE ON STUDENT
+FOR EACH ROW
+BEGIN
+  :NEW.NAME := UPPER(:NEW.NAME);
+END;
+/
