@@ -3,6 +3,7 @@
 3. collegefaculty.txt Contains data about college faculty members , triggers and exception
 4. salesman.txt salesman info and cursor use
 5. student.txt - student and course tables , triggers 
+6. student2.txt - student,semsec,class,sub,iamarks , prime or not
 
 
 
