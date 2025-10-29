@@ -1,5 +1,5 @@
-1. book.txt - Contains information about books , book authors , publisher , book copies etc
-2. employee.txt Contains employee details and related records-no company revenue 
+1. book.txt - books , book authors , publisher , book copies etc
+2. employee.txt employee details -no company revenue , palindrome pl/sql
 3. collegefaculty.txt Contains data about college faculty members , triggers and exception
 4. salesman.txt salesman info and cursor use
 5. student.txt - student and course tables , triggers 
