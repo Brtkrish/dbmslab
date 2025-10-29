@@ -1,0 +1,39 @@
+CREATE TABLE Course (
+    Course_id INT PRIMARY KEY,
+    name VARCHAR2(30),
+    fee NUMBER(10,2),
+    duration VARCHAR2(15)
+);
+
+CREATE TABLE Student (
+    roll_no INT PRIMARY KEY,
+    name VARCHAR2(30),
+    date_of_birth DATE,
+    course_id INT,
+    FOREIGN KEY (course_id) REFERENCES Course(Course_id)
+);
+
+-- COURSE TABLE
+INSERT INTO Course VALUES (101, 'BCA', 45000, '3 years');
+INSERT INTO Course VALUES (102, 'MCA', 80000, '2 years');
+INSERT INTO Course VALUES (103, 'MBA', 90000, '2 years');
+INSERT INTO Course VALUES (104, 'BSc', 40000, '3 years');
+INSERT INTO Course VALUES (105, 'MSc', 85000, '2 years');
+
+-- STUDENT TABLE
+INSERT INTO Student VALUES (1, 'Rahul', TO_DATE('2004-05-12', 'YYYY-MM-DD'), 102);
+INSERT INTO Student VALUES (2, 'Sneha', TO_DATE('2002-03-25', 'YYYY-MM-DD'), 103);
+INSERT INTO Student VALUES (3, 'Amit', TO_DATE('2006-02-10', 'YYYY-MM-DD'), 101);
+INSERT INTO Student VALUES (4, 'Kavya', TO_DATE('2001-09-15', 'YYYY-MM-DD'), 105);
+INSERT INTO Student VALUES (5, 'Ramesh', TO_DATE('2005-01-20', 'YYYY-MM-DD'), 102);
+
+create or replace trigger to_upper
+before insert or update on Student
+for each row
+begin
+ :new.name :=upper(:new.name);
+end;
+/
+INSERT INTO Student VALUES (6, 'rohan', TO_DATE('2003-10-05', 'YYYY-MM-DD'), 104);
+
+select *from student;
