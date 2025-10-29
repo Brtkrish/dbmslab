@@ -1,0 +1,131 @@
+Consider the schema for CompanyDatabase: EMPLOYEE (Eno, fName, lName, Sex, Salary, SuperSSN, DNo) DEPARTMENT (DNo, DName,) DLOCATION (DNo,DLoc) PROJECT (PNo, PName, PLocation, DNo) company(NB,Revenue).Write SQL queries to  
+1. List all those employees who are greater than 45 years of age and works under the project “Hoc”
+2. Find the sum of the salaries of all employees of the ‘clerk department, as well as the maximum salary, the minimum salary, and the average salary in this department
+3. Retrieve the first name of female employee who works on all the projects controlled by department number 2.
+--Create two triggers that will result in the automatic tracking of the number of employees a company manages. The first trigger increments the number of employees each time a new person is hired and The second trigger decrements the number of employees each time an employee leaves the company.
+
+
+CREATE TABLE COMPANY (
+  NB INT,
+  Revenue INT
+);
+
+CREATE TABLE DEPARTMENT (
+  DNo INT PRIMARY KEY,
+  DName VARCHAR(50)
+);
+
+CREATE TABLE DLOCATION (
+  DNo INT,
+  DLoc VARCHAR(50),
+  FOREIGN KEY (DNo) REFERENCES DEPARTMENT(DNo)
+);
+
+CREATE TABLE PROJECT (
+PNo INT PRIMARY KEY,
+PName VARCHAR(50),
+PLocation VARCHAR(50),
+DNo INT,
+FOREIGN KEY (DNo) REFERENCES DEPARTMENT(DNo)
+);
+
+CREATE TABLE EMPLOYEE (
+ENo INT PRIMARY KEY,
+fName VARCHAR(50),
+lName VARCHAR(50),
+Sex CHAR(1),
+Age INT,
+Salary INT,
+SuperSSN INT,
+DNo INT,
+FOREIGN KEY (SuperSSN) REFERENCES EMPLOYEE(ENo),   
+FOREIGN KEY (DNo) REFERENCES DEPARTMENT(DNo)
+);
+
+CREATE TABLE WORKS_ON (
+ENo INT,
+PNo INT,
+FOREIGN KEY (ENo) REFERENCES EMPLOYEE(ENo),
+FOREIGN KEY (PNo) REFERENCES PROJECT(PNo)
+);
+
+
+INSERT INTO COMPANY VALUES (5, 1000000);
+
+INSERT INTO DEPARTMENT VALUES 
+(1, 'HR'),
+(2, 'Clerk'),
+(3, 'Finance');
+
+INSERT INTO DLOCATION VALUES (1, 'New York');
+INSERT INTO DLOCATION VALUES (2, 'Chicago');
+INSERT INTO DLOCATION VALUES (3, 'Dallas');
+
+INSERT INTO PROJECT VALUES (101, 'Hoc', 'Chicago', 2);
+INSERT INTO PROJECT VALUES (102, 'Sigma', 'Chicago', 2);
+INSERT INTO PROJECT VALUES (103, 'Beta', 'Dallas', 3);
+
+INSERT INTO EMPLOYEE VALUES (1001, 'Alice', 'Brown', 'F', 50, 85000, NULL, 2);  
+INSERT INTO EMPLOYEE VALUES (1002, 'Bob', 'Smith', 'M', 42, 60000, 1001, 2);  
+INSERT INTO EMPLOYEE VALUES (1003, 'Ella', 'Green', 'F', 46, 62000, 1001, 2);  
+INSERT INTO EMPLOYEE VALUES (1004, 'Diana', 'Evans', 'F', 55, 90000, NULL, 3); 
+INSERT INTO EMPLOYEE VALUES (1005, 'Frank', 'Miller', 'M', 29, 48000, 1002, 2);
+
+
+INSERT INTO WORKS_ON VALUES (1001, 101);
+INSERT INTO WORKS_ON VALUES (1001, 102);
+INSERT INTO WORKS_ON VALUES (1003, 101);
+INSERT INTO WORKS_ON VALUES (1003, 102);
+INSERT INTO WORKS_ON VALUES (1002, 101);
+INSERT INTO WORKS_ON VALUES (1005, 102);
+INSERT INTO WORKS_ON VALUES (1004, 103);
+
+SELECT E.fName, E.lName, E.Sex, E.Salary, E.Age
+FROM EMPLOYEE E
+JOIN WORKS_ON W ON E.ENo = W.ENo
+JOIN PROJECT P ON W.PNo = P.PNo
+WHERE P.PName = 'Hoc' AND E.Age > 45;
+
+SELECT 
+D.DName AS Department,
+SUM(E.Salary) AS Total_Salary,
+MAX(E.Salary) AS Max_Salary,
+MIN(E.Salary) AS Min_Salary,
+AVG(E.Salary) AS Avg_Salary
+FROM EMPLOYEE E
+JOIN DEPARTMENT D ON E.DNo = D.DNo
+WHERE D.DName = 'Clerk'
+GROUP BY D.DName;
+
+SELECT E.fName
+FROM EMPLOYEE E
+WHERE E.Sex = 'F'
+AND NOT EXISTS (
+SELECT P.PNo
+FROM PROJECT P
+WHERE P.DNo = 2
+AND P.PNo NOT IN (
+SELECT W.PNo
+FROM WORKS_ON W
+WHERE W.ENo = E.ENo
+)
+);
+
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER INC_EMP_COUNT
+AFTER INSERT ON EMPLOYEE
+FOR EACH ROW
+BEGIN
+  UPDATE COMPANY
+  SET NB = NB + 1;
+END;
+/
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER DEC_EMP_COUNT
+AFTER DELETE ON EMPLOYEE
+FOR EACH ROW
+BEGIN
+  UPDATE COMPANY
+  SET NB = NB - 1;
+END;
+/
