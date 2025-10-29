@@ -2,10 +2,11 @@ Create The following two tables: College-info Faculty-info
 College-info consists of fields: college-code, college-name, address 
 Faculty-info consists of fields: college-code, faculty-code, faculty-name, qualification, experience-in-no-of-years, address. 
 The field college-code is foreign key.    
-List all those faculty members whose experience is greater than or equal to 10 years and have M. Tech degree. 
- List all those faculty members, who have at least 10 years of experience but do not have M. Tech degree. 
- List all college names of the faculty members whose experience is less than 2 years and higher qualification is phd.
-
+-List all those faculty members whose experience is greater than or equal to 10 years and have M. Tech degree. 
+-List all those faculty members, who have at least 10 years of experience but do not have M. Tech degree. 
+-List all college names of the faculty members whose experience is less than 2 years and higher qualification is phd.
+-Trigger to check if college code is 4 digits before insert on college info
+-Tigger on insert , update or delete of a record on college info
 
 CREATE TABLE COLLEGE_INFO(
 COLLEGE_CODE INT PRIMARY KEY,
@@ -67,16 +68,36 @@ WHERE
 FI.EXPERIENCE < 2 AND FI.QUALIFICATION = 'PHD';
 
 
-
-
 CREATE OR REPLACE TRIGGER trg_check_college_code
 BEFORE INSERT ON COLLEGE_INFO
 FOR EACH ROW
 BEGIN
-
-
   IF :NEW.COLLEGE_CODE < 1000 OR :NEW.COLLEGE_CODE > 9999 THEN
     RAISE_APPLICATION_ERROR(-20001, 'College code must be exactly 4 digits.');
   END IF;
 END;
 /
+
+CREATE OR REPLACE TRIGGER trg_college_insert
+AFTER INSERT ON COLLEGE_INFO
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('1 Record is inserted');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_college_delete
+AFTER DELETE ON COLLEGE_INFO
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('1 Record is deleted');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_college_update
+AFTER UPDATE ON COLLEGE_INFO
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('1 Record is updated');
+END;
+/
+
+
+
