@@ -1,9 +1,4 @@
-List of Files and Their Details
--------------------------------
-
-1. book.txt
-   • Description: Contains information about books.
-   • Last Modified: 3 minutes ago
+1. book.txt - Contains information about books , book authors , publisher , book copies etc
 
 2. college_faculty
    • Description: Contains data about college faculty members.
