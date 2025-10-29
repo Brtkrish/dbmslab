@@ -1,0 +1,177 @@
+SALESMAN (Salesman_id, Name, City, state, Commission) CUSTOMER (Customer_id, Cust_Name, City, Grade, Salesman_id) ORDERS (Ord_No, Purchase_Amt, Ord_Date, Customer_id, Salesman_id) 
+Write SQL queries to 
+0.  Count the customers with grades above 5.
+1.  Find the Bangalore’s average in grade.
+2.  Find the name and numbers of all salesmen who had more than one customer. 
+3.  List all salesmen and indicate those who have and don’t have customers in their cities 
+4.  Create a view that finds the salesman who has the customer with the highest order of a day. 
+5.  Remove salesman with id 1000. All his orders must also be deleted.
+
+--Write a PL/SQL block that will display the salesman details along with commission using cursors.
+--Write a Cursor to display the list of salesmen whose city is banglore and state is karnatka.
+
+CREATE TABLE SALESMAN (
+SALESMAN_ID INT PRIMARY KEY,
+NAME VARCHAR(100),
+CITY VARCHAR(100),
+STATE VARCHAR(100),
+COMMISSION INT
+);
+
+
+CREATE TABLE CUSTOMER (
+CUSTOMER_ID INT PRIMARY KEY,
+CUSTOMER_NAME VARCHAR(100),
+CITY VARCHAR(100),
+GRADE INT,
+SALESMAN_ID INT
+);
+
+
+CREATE TABLE ORDERS(
+ORDER_NO INT PRIMARY KEY,
+PURCHASE_AMOUNT INT,
+ORDER_DATE DATE,
+CUSTOMER_ID INT,
+SALESMAN_ID INT
+);
+
+
+ALTER TABLE CUSTOMER
+ADD CONSTRAINT 
+FOREIGN KEY(SALESMAN_ID) REFERENCES SALESMAN(SALESMAN_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+
+ALTER TABLE ORDERS
+ADD CONSTRAINT 
+FOREIGN KEY(SALESMAN_ID) REFERENCES SALESMAN(SALESMAN_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+
+ALTER TABLE ORDERS
+ADD CONSTRAINT 
+FOREIGN KEY(CUSTOMER_ID) REFERENCES CUSTOMER(CUSTOMER_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+
+INSERT INTO SALESMAN (SALESMAN_ID, NAME, CITY, STATE, COMMISSION) VALUES
+(1000, 'Ravi Kumar', 'Bangalore', 'Karnataka', 10),
+(1001, 'Amit Sharma', 'Delhi', 'Delhi', 12),
+(1002, 'Suresh Reddy', 'Hyderabad', 'Telangana', 15),
+(1003, 'Priya Mehta', 'Mumbai', 'Maharashtra', 13),
+(1004, 'Neha Singh', 'Bangalore', 'Karnataka', 11);
+
+
+INSERT INTO CUSTOMER (CUSTOMER_ID, CUSTOMER_NAME, CITY, GRADE, SALESMAN_ID) VALUES
+(2001, 'Rahul Patil', 'Bangalore', 8, 1000),
+(2002, 'Anita Desai', 'Mumbai', 6, 1003),
+(2003, 'Vikram Rao', 'Hyderabad', 9, 1002),
+(2004, 'Kiran Nair', 'Delhi', 5, 1001),
+(2005, 'Manoj Das', 'Bangalore', 7, 1000),
+(2006, 'Sneha Pillai', 'Chennai', 4, 1004),
+(2007, 'Rohit Verma', 'Bangalore', 9, 1004),
+(2008, 'Sunita Joshi', 'Pune', 3, 1003);
+
+
+INSERT INTO ORDERS (ORDER_NO, PURCHASE_AMOUNT, ORDER_DATE, CUSTOMER_ID, SALESMAN_ID) VALUES
+(3001, 15000, '2024-11-10', 2001, 1000),
+(3002, 22000, '2024-11-10', 2003, 1002),
+(3003, 18000, '2024-11-10', 2005, 1000),
+(3004, 12000, '2024-11-11', 2002, 1003),
+(3005, 25000, '2024-11-11', 2004, 1001),
+(3006, 27000, '2024-11-12', 2007, 1004),
+(3007, 9000,  '2024-11-12', 2008, 1003),
+(3008, 30000, '2024-11-12', 2003, 1002);
+
+
+
+
+SELECT COUNT(*) AS CUSTOMERS_ABOVE_5
+FROM CUSTOMER
+WHERE GRADE > 5;
+
+
+SELECT AVG(GRADE) AS AVG_IN_GRADE
+FROM CUSTOMER
+WHERE CITY ='Bangalore';
+
+
+SELECT 
+S.SALESMAN_ID , S.NAME , COUNT(C.CUSTOMER_ID) AS NO_OF_CUSTOMERS
+FROM SALESMAN S
+JOIN CUSTOMER C
+ON S.SALESMAN_ID = C.SALESMAN_ID 
+GROUP BY S.SALESMAN_ID , S.NAME
+HAVING COUNT(C.CUSTOMER_ID) >1;
+
+
+CREATE VIEW HIGHEST_ORDER_SALESMAN AS
+SELECT O.ORDER_DATE, S.SALESMAN_ID, S.NAME, C.CUSTOMER_NAME, O.PURCHASE_AMOUNT 
+FROM ORDERS O
+JOIN SALESMAN S ON O.SALESMAN_ID = S.SALESMAN_ID
+JOIN CUSTOMER C ON O.CUSTOMER_ID = C.CUSTOMER_ID
+WHERE O.PURCHASE_AMOUNT = (
+SELECT MAX(PURCHASE_AMOUNT)
+FROM ORDERS O2
+WHERE O2.ORDER_DATE = O.ORDER_DATE
+);
+
+-----------------------------------------------------------------------------------------------------
+SET SERVEROUTPUT ON;
+DECLARE
+CURSOR sal_cur IS
+SELECT SALESMAN_ID, NAME, CITY, STATE, COMMISSION FROM SALESMAN;
+  
+v_id SALESMAN.SALESMAN_ID%TYPE;
+v_name SALESMAN.NAME%TYPE;
+v_city SALESMAN.CITY%TYPE;
+v_state SALESMAN.STATE%TYPE;
+v_comm SALESMAN.COMMISSION%TYPE;
+BEGIN
+OPEN sal_cur;
+LOOP
+FETCH sal_cur INTO v_id, v_name, v_city, v_state, v_comm;
+EXIT WHEN sal_cur%NOTFOUND;
+    
+DBMS_OUTPUT.PUT_LINE(
+'ID: ' || v_id || ', Name: ' || v_name || 
+ ', City: ' || v_city || ', State: ' || v_state || 
+ ', Commission: ' || v_comm
+    );
+  END LOOP;
+  CLOSE sal_cur;
+END;
+/
+
+-----------------------------------------------------------------------------------------------------
+SET SERVEROUTPUT ON;
+
+
+DECLARE
+  CURSOR bangalore_salesmen IS
+    SELECT SALESMAN_ID, NAME, CITY, STATE
+    FROM SALESMAN
+    WHERE CITY = 'Bangalore' AND STATE = 'Karnataka';
+    
+  v_id SALESMAN.SALESMAN_ID%TYPE;
+  v_name SALESMAN.NAME%TYPE;
+  v_city SALESMAN.CITY%TYPE;
+  v_state SALESMAN.STATE%TYPE;
+BEGIN
+  OPEN bangalore_salesmen;
+  LOOP
+    FETCH bangalore_salesmen INTO v_id, v_name, v_city, v_state;
+    EXIT WHEN bangalore_salesmen%NOTFOUND;
+    
+    DBMS_OUTPUT.PUT_LINE(
+      'ID: ' || v_id || ', Name: ' || v_name || 
+      ', City: ' || v_city || ', State: ' || v_state
+    );
+  END LOOP;
+  CLOSE bangalore_salesmen;
+END;
+/
