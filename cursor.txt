@@ -1,0 +1,89 @@
+1.	Create the following tables: 
+Student (roll-no, name, subject-opted, subject-code) 
+Subject –rank (subject-code, subject-name, faculty-code) 
+Faculty (faculty-code, faculty-name, specialization) 
+Generate queries to do the following:
+(i)	Find the number of students who have enrolled for the subject "DBMS" 
+(ii)	Find all those subjects which are offered by more than one faculty member.
+(iii)	List out the name of students whose specialization is “Signal Processing”
+2.	Write a PL/SQL block that will display the student details along with subject code using cursors.
+To write a Cursor to find students with given subject-opted and subject-code.
+
+
+
+-- STUDENT TABLE
+CREATE TABLE Student (
+  roll_no NUMBER PRIMARY KEY,
+  name VARCHAR2(50),
+  subject_opted VARCHAR2(50),
+  subject_code VARCHAR2(10)
+);
+
+-- SUBJECT_RANK TABLE
+CREATE TABLE Subject_Rank (
+  subject_code VARCHAR2(10) PRIMARY KEY,
+  subject_name VARCHAR2(50),
+  faculty_code VARCHAR2(10)
+);
+
+-- FACULTY TABLE
+CREATE TABLE Faculty (
+  faculty_code VARCHAR2(10) PRIMARY KEY,
+  faculty_name VARCHAR2(50),
+  specialization VARCHAR2(50)
+);
+
+-- FACULTY DATA
+INSERT INTO Faculty VALUES ('F01', 'Dr. Meera', 'Database Systems');
+INSERT INTO Faculty VALUES ('F02', 'Dr. Arjun', 'Signal Processing');
+INSERT INTO Faculty VALUES ('F03', 'Dr. Neha', 'Machine Learning');
+INSERT INTO Faculty VALUES ('F04', 'Dr. Raj', 'Signal Processing');
+
+-- SUBJECT_RANK DATA
+INSERT INTO Subject_Rank VALUES ('S01', 'DBMS', 'F01');
+INSERT INTO Subject_Rank VALUES ('S02', 'Signal Processing', 'F02');
+INSERT INTO Subject_Rank VALUES ('S03', 'Machine Learning', 'F03');
+INSERT INTO Subject_Rank VALUES ('S04', 'Signal Processing', 'F04');
+
+-- STUDENT DATA
+INSERT INTO Student VALUES (101, 'Bharath', 'DBMS', 'S01');
+INSERT INTO Student VALUES (102, 'Anu', 'Signal Processing', 'S02');
+INSERT INTO Student VALUES (103, 'Ravi', 'Machine Learning', 'S03');
+INSERT INTO Student VALUES (104, 'Meena', 'Signal Processing', 'S04');
+INSERT INTO Student VALUES (105, 'Kiran', 'DBMS', 'S01');
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+  -- Input values
+  v_subject_opted Student.subject_opted%TYPE := 'DBMS';
+  v_subject_code  Student.subject_code%TYPE  := 'S01';
+
+  -- Cursor declaration
+  CURSOR stu_cur IS
+    SELECT roll_no, name, subject_opted, subject_code
+    FROM Student
+    WHERE subject_opted = v_subject_opted
+      AND subject_code  = v_subject_code;
+
+  v_row stu_cur%ROWTYPE;
+BEGIN
+  OPEN stu_cur;
+  LOOP
+    FETCH stu_cur INTO v_row;
+    EXIT WHEN stu_cur%NOTFOUND;
+
+    DBMS_OUTPUT.PUT_LINE(
+      'Roll No: ' || v_row.roll_no ||
+      ', Name: ' || v_row.name ||
+      ', Subject: ' || v_row.subject_opted ||
+      ', Code: ' || v_row.subject_code
+    );
+  END LOOP;
+  CLOSE stu_cur;
+END;
+/
+
+DECLARE
+  CURSOR  curser_name IS
+    select 
