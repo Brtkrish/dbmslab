@@ -1,0 +1,85 @@
+CREATE TABLE SALESMAN (
+    Salesman_id INT PRIMARY KEY,
+    Name VARCHAR2(30),
+    City VARCHAR2(30),
+    State VARCHAR2(30),
+    Commission NUMBER(5,2)
+);
+
+CREATE TABLE CUSTOMER (
+    Customer_id INT PRIMARY KEY,
+    Cust_Name VARCHAR2(30),
+    City VARCHAR2(30),
+    Grade INT,
+    Salesman_id INT,
+    FOREIGN KEY (Salesman_id) REFERENCES SALESMAN(Salesman_id)
+);
+
+CREATE TABLE ORDERS (
+    Ord_No INT PRIMARY KEY,
+    Purchase_Amt NUMBER(10,2),
+    Ord_Date DATE,
+    Customer_id INT,
+    Salesman_id INT,
+    FOREIGN KEY (Customer_id) REFERENCES CUSTOMER(Customer_id),
+    FOREIGN KEY (Salesman_id) REFERENCES SALESMAN(Salesman_id)
+);
+
+-- SALESMAN table
+INSERT INTO SALESMAN VALUES (1000, 'Ravi', 'Bangalore', 'Karnataka', 15.5);
+INSERT INTO SALESMAN VALUES (1001, 'Anil', 'Mumbai', 'Maharashtra', 12.0);
+INSERT INTO SALESMAN VALUES (1002, 'Kiran', 'Chennai', 'Tamil Nadu', 10.5);
+INSERT INTO SALESMAN VALUES (1003, 'Suresh', 'Bangalore', 'Karnataka', 13.0);
+INSERT INTO SALESMAN VALUES (1004, 'Manoj', 'Delhi', 'Delhi', 14.0);
+
+-- CUSTOMER table
+INSERT INTO CUSTOMER VALUES (2001, 'Rahul', 'Bangalore', 8, 1000);
+INSERT INTO CUSTOMER VALUES (2002, 'Sneha', 'Mumbai', 6, 1001);
+INSERT INTO CUSTOMER VALUES (2003, 'Priya', 'Chennai', 9, 1002);
+INSERT INTO CUSTOMER VALUES (2004, 'Vikram', 'Bangalore', 7, 1003);
+INSERT INTO CUSTOMER VALUES (2005, 'Karthik', 'Delhi', 5, 1004);
+INSERT INTO CUSTOMER VALUES (2006, 'Ananya', 'Bangalore', 8, 1000);
+
+
+1. SALESMAN (Salesman_id, Name, City, state, Commission) CUSTOMER (Customer_id, Cust_Name, City, Grade, Salesman_id) ORDERS (Ord_No, Purchase_Amt, Ord_Date, Customer_id, Salesman_id) 
+Write SQL queries to 
+1.	Count the customers with grades above 5
+2.	Find the Bangalore’s average in grade.
+3. Find the name and numbers of all salesmen who had more than one customer. 
+4. List all salesmen and indicate those who have and don’t have customers in their cities 
+5. Create a view that finds the salesman who has the customer with the highest order of a day. 
+5. Remove salesman with id 1000. All his orders must also be deleted.
+
+2.	Write a PL/SQL block that will display the salesman details along with commission using cursors.
+Write a Cursor to display the list of salesmen whose city is banglore and state is karnatka.
+
+
+-- ORDERS table
+INSERT INTO ORDERS VALUES (3001, 25000, TO_DATE('2024-08-10', 'YYYY-MM-DD'), 2001, 1000);
+INSERT INTO ORDERS VALUES (3002, 15000, TO_DATE('2024-08-10', 'YYYY-MM-DD'), 2002, 1001);
+INSERT INTO ORDERS VALUES (3003, 22000, TO_DATE('2024-08-11', 'YYYY-MM-DD'), 2003, 1002);
+INSERT INTO ORDERS VALUES (3004, 32000, TO_DATE('2024-08-12', 'YYYY-MM-DD'), 2004, 1003);
+INSERT INTO ORDERS VALUES (3005, 18000, TO_DATE('2024-08-12', 'YYYY-MM-DD'), 2006, 1000);
+
+DECLARE 
+  CURSOR show_salesman is
+    select Name,city,state,Commission from SALESMAN 
+    where City='Bangalore' and State='Karnataka';
+    
+  v_name varchar(50);
+  v_city varchar(50);
+  v_state varchar(50);
+  v_comm varchar(50);
+  
+Begin
+  open show_salesman;
+  loop
+  fetch show_salesman INTO
+  v_name,v_city,v_state,v_comm;
+  exit when show_salesman%notfound;
+  DBMS_OUTPUT.PUT_LINE('Name: ' || v_name || ' | City: ' || v_city || 
+  ' | State: ' || v_state || ' | Commission: ' || v_comm);
+  end loop;
+  close show_salesman;
+  end;
+  /
