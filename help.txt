@@ -8,9 +8,6 @@
 8. student4.txt - student,course,instructor,take
 9. movie.txt - actor,director,movies,cast,rating-fibonacci
 10.company.txt - company,dept,dloc,proj,emp,workson
-
-
-
-4. palindrome.txt
-5. prime.txt
-6. fibonacci.txt
+11. palindrome.txt
+12. prime.txt
+13. fibonacci.txt
