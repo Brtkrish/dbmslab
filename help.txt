@@ -2,7 +2,7 @@
 2. employee.txt Contains employee details and related records-no company revenue 
 3. collegefaculty.txt Contains data about college faculty members , triggers and exception
 4. salesman.txt salesman info and cursor use
-   
+5. student.txt - student and course tables , triggers 
 
 
 
