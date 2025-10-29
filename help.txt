@@ -1,9 +1,8 @@
 1. book.txt - Contains information about books , book authors , publisher , book copies etc
-2. employee.txt Contains employee details and related records-no company revenue
-  
-3. college_faculty
-   • Description: Contains data about college faculty members.
-   • Last Modified: now
+2. employee.txt Contains employee details and related records-no company revenue 
+3. college_faculty.txt Contains data about college faculty members , triggers and exception
+
+   
 
 
 
