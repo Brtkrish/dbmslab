@@ -1,0 +1,149 @@
+Create the following tables: Student (roll-no, name, subject-opted,marks) Subject –rank (subject-code, subject-name, faculty-code) Faculty (faculty-code, faculty-name, specialization) 
+Generate queries to do the following: 
+1.Find the number of students who have enrolled for the subject "OS" 
+2.Find all those students who opted for more than 5 subjects. 
+3.List out the name of the students whose specialisation is “IP”
+---Write a PL/SQL block that will display the student details along with subject opted using cursors.
+---write a cursor to select the five highest marks scored students from the table.
+
+CREATE TABLE FACULTY (
+    FACULTY_CODE INT PRIMARY KEY,
+    FACULTY_NAME VARCHAR(100),
+    SPECIALIZATION VARCHAR(100)
+);
+
+CREATE TABLE SUBJECT_RANK (
+    SUBJECT_CODE INT PRIMARY KEY,
+    SUBJECT_NAME VARCHAR(100),
+    FACULTY_CODE INT,
+    FOREIGN KEY (FACULTY_CODE) REFERENCES FACULTY(FACULTY_CODE)
+);
+
+CREATE TABLE STUDENT (
+    ROLL_NO INT PRIMARY KEY,
+    NAME VARCHAR(100),
+    SUBJECT_OPTED INT,
+    MARKS INT,
+    FOREIGN KEY (SUBJECT_OPTED) REFERENCES SUBJECT_RANK(SUBJECT_CODE)
+);
+
+INSERT INTO FACULTY VALUES
+(101, 'Dr. Sharma', 'OS'),
+(102, 'Dr. Ramesh', 'DBMS'),
+(103, 'Dr. Anitha', 'IP'),
+(104, 'Dr. Priya', 'CN'),
+(105, 'Dr. Kiran', 'AI');
+
+INSERT INTO SUBJECT_RANK VALUES
+(201, 'OS', 101),
+(202, 'DBMS', 102),
+(203, 'IP', 103),
+(204, 'CN', 104),
+(205, 'AI', 105),
+(206, 'ML', 105);
+
+INSERT INTO STUDENT VALUES
+(1, 'Amit', 201, 89),
+(2, 'Sneha', 202, 92),
+(3, 'Rahul', 203, 76),
+(4, 'Priya', 201, 85),
+(5, 'Karan', 204, 90),
+(6, 'Neha', 203, 95),
+(7, 'Divya', 205, 87),
+(8, 'Manoj', 206, 80);
+
+
+
+SELECT COUNT(*) AS NUM_OF_STUDENTS
+FROM STUDENT S
+JOIN SUBJECT_RANK SR ON S.SUBJECT_OPTED = SR.SUBJECT_CODE
+WHERE SR.SUBJECT_NAME = 'OS';
+
+SELECT 
+S.ROLL_NO,
+S.NAME,
+COUNT(S.SUBJECT_OPTED) AS SUBJECT_COUNT
+FROM STUDENT S
+JOIN SUBJECT_RANK SR 
+ON S.SUBJECT_OPTED = SR.SUBJECT_CODE
+GROUP BY S.ROLL_NO, S.NAME
+HAVING COUNT(S.SUBJECT_OPTED) > 5;
+
+SELECT DISTINCT S.NAME
+FROM STUDENT S
+JOIN SUBJECT_RANK SR ON S.SUBJECT_OPTED = SR.SUBJECT_CODE
+JOIN FACULTY F ON SR.FACULTY_CODE = F.FACULTY_CODE
+WHERE F.SPECIALIZATION = 'IP';
+
+---------------------------------------------------------------------------------------------------
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+    CURSOR stu_cur IS
+        SELECT 
+            S.ROLL_NO,
+            S.NAME,
+            SR.SUBJECT_NAME,
+            S.MARKS
+        FROM STUDENT S
+        JOIN SUBJECT_RANK SR
+        ON S.SUBJECT_OPTED = SR.SUBJECT_CODE;
+
+    v_roll_no STUDENT.ROLL_NO%TYPE;
+    v_name STUDENT.NAME%TYPE;
+    v_subject SUBJECT_RANK.SUBJECT_NAME%TYPE;
+    v_marks STUDENT.MARKS%TYPE;
+
+BEGIN
+    OPEN stu_cur;
+    LOOP
+        FETCH stu_cur INTO v_roll_no, v_name, v_subject, v_marks;
+        EXIT WHEN stu_cur%NOTFOUND;
+
+        DBMS_OUTPUT.PUT_LINE(
+            'ROLL NO: ' || v_roll_no || 
+            ', NAME: ' || v_name || 
+            ', SUBJECT: ' || v_subject || 
+            ', MARKS: ' || v_marks
+        );
+    END LOOP;
+    CLOSE stu_cur;
+END;
+/
+
+
+---------------------------------------------------------------------------------------------------------------------------
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+CURSOR top5_cur IS
+SELECT 
+ROLL_NO,
+NAME,
+MARKS
+FROM STUDENT
+ORDER BY MARKS DESC
+FETCH FIRST 5 ROWS ONLY;  -- Oracle 12c+ syntax
+
+v_roll_no STUDENT.ROLL_NO%TYPE;
+v_name STUDENT.NAME%TYPE;
+v_marks STUDENT.MARKS%TYPE;
+
+BEGIN
+OPEN top5_cur;
+LOOP
+FETCH top5_cur INTO v_roll_no, v_name, v_marks;
+EXIT WHEN top5_cur%NOTFOUND;
+
+DBMS_OUTPUT.PUT_LINE(
+'ROLL NO: ' || v_roll_no ||
+', NAME: ' || v_name ||
+', MARKS: ' || v_marks
+);
+END LOOP;
+CLOSE top5_cur;
+END;
+/
+—--------------------------------------------------------------------------------------------------------------------------------------
