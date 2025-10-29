@@ -1,4 +1,3 @@
-Palindrome
 SET SERVEROUTPUT ON;
 
 DECLARE
