@@ -1,12 +1,12 @@
 Consider the schema for CompanyDatabase: EMPLOYEE (SSN, fName, lName, Address, Sex, Salary, SuperSSN, DNo) DEPARTMENT (DNo, DName, MgrSSN, MgrStartDate) DLOCATION (DNo,DLoc) PROJECT (PNo, PName, PLocation, DNo) WORKS_ON (SSN, PNo, Hours) 
 Write SQL queries to  
-Make a list of all project numbers for projects that involve an employee whose FIRST name is ‘Scott’, either as a worker or as a manager of the department that controls the project. 
-Show the resulting salaries if every employee working on the ‘IoT’ project is given a 10 percentraise. 
-Find the sum of the salaries of all employees of the ‘Accounts’ department.
-Display the employee with minimum salary. 
-Retrieve the name of each employee who works on all the projects controlled by department number 4 
-Retrieve the number of employees whose salary more than Rs.6,00,000.
-Write a Program to Check whether the given number is Palindrome in PL/SQL
+-Make a list of all project numbers for projects that involve an employee whose FIRST name is ‘Scott’, either as a worker or as a manager of the department that controls the project. 
+-Show the resulting salaries if every employee working on the ‘IoT’ project is given a 10 percentraise. 
+-Find the sum of the salaries of all employees of the ‘Accounts’ department.
+-Display the employee with minimum salary. 
+-Retrieve the name of each employee who works on all the projects controlled by department number 4 
+-Retrieve the number of employees whose salary more than Rs.6,00,000.
+-Write a Program to Check whether the given number is Palindrome in PL/SQL
 
 
 CREATE TABLE EMPLOYEE (
@@ -132,8 +132,6 @@ FOREIGN KEY(PNO) REFERENCES PROJECT(PNO)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
-
-
 SELECT P.PNo
 FROM PROJECT P
 JOIN DEPARTMENT D ON P.DNo = D.DNo
@@ -149,8 +147,6 @@ FROM EMPLOYEE E
 JOIN WORKS_ON W ON E.SSN = W.SSN
 JOIN PROJECT P ON W.PNo = P.PNo
 WHERE P.PName = 'IoT';
-
-
 
 SELECT D.DName, SUM(E.Salary) AS Total_Salary
 FROM EMPLOYEE E
