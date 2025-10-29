@@ -1,0 +1,36 @@
+create table company
+(nb number primary key,
+revenue number);
+
+INSERT INTO company VALUES (1, 50000);
+
+create table employee(
+eno number primary key,
+fname varchar(50),
+sex char(1)
+);
+
+create or replace trigger update_company
+before insert or delete on employee
+for each row
+
+begin
+  if inserting then
+    update company
+      set nb=nb+1;
+  elsif deleting then
+    update company
+      set nb=nb-1;
+  end if;
+end;
+/
+INSERT INTO employee VALUES (101, 'Bharath', 'M');
+INSERT INTO employee VALUES (102, 'Anu', 'F');
+
+SELECT * FROM company;
+
+delete from employee where eno=101;
+
+select * from company;
+  
+  
