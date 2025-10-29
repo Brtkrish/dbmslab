@@ -166,3 +166,24 @@ WHERE P.DNo = 4;
 SELECT COUNT(*) AS No_of_Employees
 FROM EMPLOYEE
 WHERE Salary > 600000;
+---------------------------------------------------------------------------------------------
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+n NUMBER := 121;
+rev number := 0;
+temp number := n;
+
+BEGIN
+WHILE temp > 0 LOOP
+rev := rev * 10 + MOD(temp,10);
+temp := FLOOR(temp/10);
+END LOOP;
+
+IF n = rev THEN
+DBMS_OUTPUT.PUT_LINE(n || ' is a palindrome');
+ELSE
+DBMS_OUTPUT.PUT_LINE(n || ' is not a palindrome');
+END IF;
+END;
