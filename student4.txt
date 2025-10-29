@@ -1,0 +1,98 @@
+Create the following tables: STUDENT (Student#, LastName, FirstName, Address, City, State, Zip, Enroll_Date)
+COURSE (Course#, Title, CrHour, InstName) INSTRUCTOR (InstName, InstOffice, Rank) Take (Student#, Course#, Grade)
+Generate queries to do the following:
+1.Find the number of students who have enrolled for the subject physics and grade “A” 
+2.List out all the students under the instructor ‘Alice’
+3.List out the name of students who have enrolled for the subject chemistry with course number 101 and city ‘kochi’ in ascending order.
+4.Create a view of all students with course number and instructor name.
+
+
+
+CREATE TABLE STUDENT (
+  Student# INT PRIMARY KEY,
+  LastName VARCHAR(50),
+  FirstName VARCHAR(50),
+  Address VARCHAR(100),
+  City VARCHAR(50),
+  State VARCHAR(20),
+  Zip VARCHAR(10),
+  Enroll_Date DATE
+);
+
+CREATE TABLE INSTRUCTOR (
+  InstName VARCHAR(50) PRIMARY KEY,
+  InstOffice VARCHAR(50),
+  Rank VARCHAR(30)
+);
+
+CREATE TABLE COURSE (
+  Course# INT PRIMARY KEY,
+  Title VARCHAR(50),
+  CrHour INT,
+  InstName VARCHAR(50),
+  FOREIGN KEY (InstName) REFERENCES INSTRUCTOR(InstName)
+);
+
+CREATE TABLE TAKE (
+  Student# INT,
+  Course# INT,
+  Grade CHAR(1),
+  PRIMARY KEY (Student#, Course#),
+  FOREIGN KEY (Student#) REFERENCES STUDENT(Student#),
+  FOREIGN KEY (Course#) REFERENCES COURSE(Course#)
+);
+
+INSERT INTO INSTRUCTOR VALUES 
+('Alice', 'Room 101', 'Professor'),
+('Bob', 'Room 102', 'Associate Professor'),
+('Carol', 'Room 103', 'Assistant Professor');
+
+INSERT INTO STUDENT VALUES
+(1, 'Sharma', 'Raj', '12 MG Road', 'Kochi', 'Kerala', '682001', '2023-06-12'),
+(2, 'Patel', 'Neha', '45 Hill St', 'Mumbai', 'Maharashtra', '400001', '2023-07-01'),
+(3, 'Das', 'Amit', '8 Park Lane', 'Kochi', 'Kerala', '682020', '2023-06-20'),
+(4, 'Rao', 'Sneha', '22 Sea View', 'Chennai', 'Tamil Nadu', '600041', '2023-06-18'),
+(5, 'Kumar', 'Anil', '10 Main Rd', 'Delhi', 'Delhi', '110001', '2023-05-25');
+
+INSERT INTO COURSE VALUES
+(101, 'Chemistry', 4, 'Alice'),
+(102, 'Physics', 3, 'Bob'),
+(103, 'Mathematics', 4, 'Carol'),
+(104, 'Biology', 3, 'Alice');
+
+INSERT INTO TAKE VALUES
+(1, 102, 'A'),
+(2, 102, 'B'),
+(3, 101, 'A'),
+(4, 101, 'B'),
+(5, 103, 'A'),
+(1, 104, 'B'),
+(3, 102, 'A');
+
+SELECT COUNT(*) AS No_of_Students
+FROM TAKE T
+JOIN COURSE C ON T.Course# = C.Course#
+WHERE C.Title = 'Physics' AND T.Grade = 'A';
+
+SELECT S.Student#, S.FirstName, S.LastName, C.Title, I.InstName
+FROM STUDENT S
+JOIN TAKE T ON S.Student# = T.Student#
+JOIN COURSE C ON C.Course# = T.Course#
+JOIN INSTRUCTOR I ON I.InstName = C.InstName
+WHERE I.InstName = 'Alice';
+
+SELECT S.FirstName, S.LastName, S.City, C.Title
+FROM STUDENT S
+JOIN TAKE T ON S.Student# = T.Student#
+JOIN COURSE C ON C.Course# = T.Course#
+WHERE C.Title = 'Chemistry' 
+  AND C.Course# = 101
+  AND S.City = 'Kochi'
+ORDER BY S.FirstName ASC;
+
+CREATE VIEW STUDENT_COURSE_INSTRUCTOR AS
+SELECT S.Student#, S.FirstName, S.LastName, C.Course#, C.Title, I.InstName
+FROM STUDENT S
+JOIN TAKE T ON S.Student# = T.Student#
+JOIN COURSE C ON C.Course# = T.Course#
+JOIN INSTRUCTOR I ON I.InstName = C.InstName;
