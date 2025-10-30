@@ -14,7 +14,7 @@
 
 
 
-List of files in the directory and their descriptions:
+
 
 1. book.txt – Contains information or records related to books.
 2. collegefaculty.txt – Stores details about college faculty members.
