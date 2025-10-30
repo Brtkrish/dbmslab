@@ -11,3 +11,27 @@
 11. palindrome.txt
 12. prime.txt
 13. fibonacci.txt
+
+
+
+List of files in the directory and their descriptions:
+
+1. book.txt – Contains information or records related to books.
+2. collegefaculty.txt – Stores details about college faculty members.
+3. company.txt – Contains company information and employee structure.
+4. cursor.txt – Demonstrates cursor usage in PL/SQL.
+5. employee.txt – Stores employee data and related operations.
+6. fibonacci.txt – Program to generate Fibonacci series.
+7. help.txt – Contains the list and descriptions of all files in this directory.
+8. index.html – Basic HTML structure for the webpage.
+9. movie.txt – Contains movie database details and SQL queries.
+10. palindrome.txt – Program to check whether a given number or string is a palindrome.
+11. prime.txt – Program to check whether a number is prime.
+12. salesman.txt – Contains salesman data and related SQL queries.
+13. salesman_cursor.txt – Creates SALESMAN, CUSTOMER, and ORDERS tables with sample data and cursor operations.
+14. student.txt – Stores student information or related SQL operations.
+15. student2.txt – Extended or updated student-related queries or data.
+16. student3.txt – Additional student table modifications or records.
+17. student4.txt – Contains further student-related SQL operations.
+18. toupper.txt – Program or trigger to convert text data to uppercase.
+19. trigger.txt – SQL script for company and employee tables with triggers.
